@@ -41,6 +41,7 @@
     <button onclick="showSection('loginSection')">Logout</button>
   </div>
 
+                          <!-- have 3 section but only 1 thing visible at a time -->
   <!-- <script>
     function showSection(id) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
@@ -59,7 +60,8 @@
     });
   </script> -->
 
-  <script>
+                              <!-- single user data store on local storage-->
+  <!-- <script>
     function showSection(id) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(id).classList.add('active');
@@ -108,8 +110,72 @@
         alert("Invalid email or password.");
       }
     });
-  </script>
-  
+  </script> -->
+
+              <!-- multiple user data store in local storage -->
+
+    <script>
+      function showSection(id) {
+        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+      }
+    
+      //  SIGN UP
+      document.getElementById('signupForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+    
+        const username = this.querySelector('input[placeholder="Username"]').value.trim();
+        const email = this.querySelector('input[placeholder="Email"]').value.trim();
+        const password = this.querySelector('input[placeholder="Password"]').value;
+        const confirmPassword = this.querySelector('input[placeholder="Confirm Password"]').value;
+    
+        if (password !== confirmPassword) {
+          alert("Passwords do not match!");
+          return;
+        }
+    
+        //  Get existing users or empty array
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+    
+        // Check if email already exists
+        if (users.some(user => user.email === email)) {
+          alert("User with this email already exists!");
+          return;
+        }
+    
+        //  Add new user
+        const newUser = { username, email, password };
+        users.push(newUser);
+    
+        //  Save updated array to localStorage
+        localStorage.setItem("users", JSON.stringify(users));    
+    
+        alert("Account created successfully!"); 
+        showSection('loginSection');
+      });
+    
+      //  LOGIN
+      document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+    
+        const email = this.querySelector('input[placeholder="Email"]').value.trim();
+        const password = this.querySelector('input[placeholder="Password"]').value;
+    
+        //  Get stored users
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+    
+        //  Find matching user
+        const matchedUser = users.find(user => user.email === email && user.password === password);
+    
+        if (matchedUser) {
+          alert(`Welcome back, ${matchedUser.username}!`);
+          showSection('homeSection');
+        } else {
+          alert("Invalid email or password.");
+        }
+      });
+    </script>
+    
 
 </body>
 </html>
